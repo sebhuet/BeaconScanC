@@ -47,10 +47,7 @@ SRC_FILES += \
   $(SDK_ROOT)/components/ble/ble_services/ble_nus_c/ble_nus_c.c \
   $(SDK_ROOT)/components/softdevice/common/softdevice_handler/softdevice_handler.c \
   $(PROJ_DIR)/src/main.cpp \
-  $(PROJ_DIR)/src/Sys/Memory.cpp \
-  $(PROJ_DIR)/src/Sys/Sys.c \
-  $(PROJ_DIR)/src/Timer/MyTimer.cpp \
-
+  
 # Include folders common to all targets
 INC_FOLDERS += \
   $(SDK_ROOT)/components \
@@ -160,8 +157,6 @@ INC_FOLDERS += \
   $(SDK_ROOT)/components/toolchain/gcc \
   $(SDK_ROOT)/external/segger_rtt \
   $(PROJ_DIR)/src/config \
-  $(PROJ_DIR)/src/Sys \
-  $(PROJ_DIR)/src/Timer \
 
 # Libraries common to all targets
 LIB_FILES += \

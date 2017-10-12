@@ -49,24 +49,33 @@ extern "C" {
 #include "app_util.h"
 #include "ble.h"
 #include "ble_db_discovery.h"
+#include "ble_stack_handler_types.h"
 #include "ble_gap.h"
 #include "ble_hci.h"
 #include "boards.h"
 #include "bsp.h"
 #include "bsp_btn_ble.h"
 #include "nordic_common.h"
+#include "nrf.h"
+#include "nrf52.h"
 #include "nrf_drv_gpiote.h"
-#include "nrf_log.h"
-#include "nrf_log_ctrl.h"
 #include "nrf_nvic.h"
 #include "softdevice_handler.h"
 //
 }
 
+#define NRF_LOG_MODULE_NAME "APP"
+
+extern "C"
+{
+#include "nrf_log.h"
+#include "nrf_log_ctrl.h"
+}
+
 #define SCAN_INTERVAL           0x0200                 	 /**< Determines scan interval in units of 0.625 millisecond. */
 #define SCAN_WINDOW             0x0050 	 //80x0.625=50ms /**< Determines scan window in units of 0.625 millisecond. */
 #define SCAN_TIMEOUT            0x0000                                  /**< Timout when scanning. 0x0000 disables timeout. */
-#define SEUIL					-60	  								//TODO dyn param avec whitelist
+#define SCAN_THRESHOLD			-90	  								//TODO dyn param avec whitelist
 
 /** @brief Parameters used when scanning. */
 static ble_gap_scan_params_t const m_scan_params {
@@ -113,9 +122,11 @@ static nrf_radio_request_t  m_timeslot_request;
 static uint32_t             m_slot_length_us;
 static nrf_radio_signal_callback_return_param_t signal_callback_return_param;
 
-#define SLOT_LENGTH_US 	10000
-#define SLOT_TIMEOUT_US	1000000
-#define SLOT_SANITY_END_US 1000
+#define SLOT_LENGTH_US 		  10000
+#define SLOT_EXTEND_US 		   1000
+#define SLOT_TIMEOUT_US		1000000
+#define SLOT_SANITY_END_US 	   1000
+
 /**@snippet [Handling events from the ble_nus_c module] */
 
 /**@brief Function for putting the chip into sleep mode.
@@ -222,7 +233,7 @@ void on_ble_evt(ble_evt_t * p_ble_evt) {
 		const ble_gap_evt_adv_report_t * p_adv_report =
 				&p_gap_evt->params.adv_report;
 
-		if (p_adv_report->rssi > SEUIL) { //TODO Whitelist
+		if (p_adv_report->rssi > SCAN_THRESHOLD) { //TODO Whitelist
 			NRF_LOG_DEBUG("Beacon %02x:%02x:%02x:%02x:%02x:%02x\r\n",
 					p_adv_report->peer_addr.addr[5],
 					p_adv_report->peer_addr.addr[4],
@@ -240,7 +251,7 @@ void on_ble_evt(ble_evt_t * p_ble_evt) {
 	break; // BLE_GAP_EVT_ADV_REPORT
 
 	default:
-		NRF_LOG_DEBUG("Unhandled Beacon Event %d:\r\n",
+		NRF_LOG_DEBUG("Defaulted Beacon Event %d:\r\n",
 				p_ble_evt->header.evt_id);
 		break;
 	}
@@ -373,7 +384,7 @@ nrf_radio_signal_callback_return_param_t * ts_radio_callback(uint8_t signal_type
 		{
 			NRF_TIMER0->EVENTS_COMPARE[0] = 0;
 
-			signal_callback_return_param.params.extend.length_us = m_slot_length_us;
+			signal_callback_return_param.params.extend.length_us = SLOT_EXTEND_US;
 			signal_callback_return_param.callback_action         = NRF_RADIO_SIGNAL_CALLBACK_ACTION_EXTEND;
 		}
 	}
@@ -382,7 +393,7 @@ nrf_radio_signal_callback_return_param_t * ts_radio_callback(uint8_t signal_type
 	case NRF_RADIO_CALLBACK_SIGNAL_TYPE_EXTEND_SUCCEEDED:
 	{
 		//Extension succeeded, reset timer(configurations still valid since slot length is the same)
-		NRF_TIMER0->CC[0]    += m_slot_length_us;
+		NRF_TIMER0->CC[0]    += SLOT_EXTEND_US;
 	}
 	break;
 
@@ -584,6 +595,7 @@ int main(void) {
 	enable_ir_pin();
 	NRF_LOG_DEBUG("IR pin enabled.\r\n");
 
+    
 	NRF_LOG_INFO("BeaconScan started\r\n");
 
 	for (;;) {

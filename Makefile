@@ -34,9 +34,6 @@ SRC_FILES += \
   $(SDK_ROOT)/components/libraries/bsp/bsp.c \
   $(SDK_ROOT)/components/libraries/bsp/bsp_btn_ble.c \
   $(SDK_ROOT)/components/libraries/bsp/bsp_nfc.c \
-  $(SDK_ROOT)/external/segger_rtt/RTT_Syscalls_GCC.c \
-  $(SDK_ROOT)/external/segger_rtt/SEGGER_RTT.c \
-  $(SDK_ROOT)/external/segger_rtt/SEGGER_RTT_printf.c \
   $(SDK_ROOT)/components/ble/common/ble_advdata.c \
   $(SDK_ROOT)/components/ble/common/ble_conn_params.c \
   $(SDK_ROOT)/components/ble/ble_db_discovery/ble_db_discovery.c \
@@ -46,6 +43,9 @@ SRC_FILES += \
   $(SDK_ROOT)/components/toolchain/system_nrf52.c \
   $(SDK_ROOT)/components/ble/ble_services/ble_nus_c/ble_nus_c.c \
   $(SDK_ROOT)/components/softdevice/common/softdevice_handler/softdevice_handler.c \
+  $(SDK_ROOT)/external/segger_rtt/RTT_Syscalls_GCC.c \
+  $(SDK_ROOT)/external/segger_rtt/SEGGER_RTT.c \
+  $(SDK_ROOT)/external/segger_rtt/SEGGER_RTT_printf.c \
   $(PROJ_DIR)/src/main.cpp \
   
 # Include folders common to all targets
@@ -110,6 +110,8 @@ INC_FOLDERS += \
   $(SDK_ROOT)/components/drivers_nrf/uart \
   $(SDK_ROOT)/components/drivers_nrf/usbd \
   $(SDK_ROOT)/components/drivers_nrf/wdt \
+  $(SDK_ROOT)/components/libraries/block_dev \
+  $(SDK_ROOT)/components/libraries/block_dev/sdc \
   $(SDK_ROOT)/components/libraries/bsp \
   $(SDK_ROOT)/components/libraries/button \
   $(SDK_ROOT)/components/libraries/crc16 \
@@ -132,6 +134,7 @@ INC_FOLDERS += \
   $(SDK_ROOT)/components/libraries/pwm \
   $(SDK_ROOT)/components/libraries/queue \
   $(SDK_ROOT)/components/libraries/scheduler \
+  $(SDK_ROOT)/components/libraries/sdcard \
   $(SDK_ROOT)/components/libraries/slip \
   $(SDK_ROOT)/components/libraries/simple_timer \
   $(SDK_ROOT)/components/libraries/strerror \
@@ -155,6 +158,9 @@ INC_FOLDERS += \
   $(SDK_ROOT)/components/toolchain \
   $(SDK_ROOT)/components/toolchain/cmsis/include \
   $(SDK_ROOT)/components/toolchain/gcc \
+  $(SDK_ROOT)/external/fatfs \
+  $(SDK_ROOT)/external/fatfs/port \
+  $(SDK_ROOT)/external/fatfs/src \
   $(SDK_ROOT)/external/segger_rtt \
   $(PROJ_DIR)/src/config \
 
